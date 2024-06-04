@@ -18,30 +18,46 @@ export class AuthService {
 
 // REGISTER INICIO
 /** HACEMOS DESECTRUCTURACION PASANDO LAS VARIABLES POR SEPARADO */
-async register({ password, email, name }: RegisterDto) {
+async register({ password, email, name, secretWord }: RegisterDto) {
 
-  /** BUSCAMOS EN LA "BD" QUE NO EXISTA EL EMAIL */
-    const user = await this.usersService.findOneByEmail(email);
+  try {
+      /** BUSCAMOS EN LA "BD" QUE NO EXISTA EL EMAIL */
+      const user = await this.usersService.findOneByEmail(email);
 
-/** SI EXISTE LANZAMOS UN BADREQUEST */
-    if (user) {
-      throw new BadRequestException("Email already exists");
-    }
+      /** SI EXISTE LANZAMOS UN BADREQUEST */
+          if (user) {
+            throw new BadRequestException("Email already exists");
+          }
+      
+      /** SI NO EXISTE SEGUIMOS CON EL REGISTRO */
+          /** CIFRAMOS LA CONTRASEÑA */
+          const hashedPassword = await bcryptjs.hash(password, 10);
+          const hashedSecretWord = await bcryptjs.hash(secretWord, 10);
+      
+          /** LLAMAMOS AL SERVICIO PARA CREAR EL USUARIO */
 
-/** SI NO EXISTE SEGUIMOS CON EL REGISTRO */
-    /** CIFRAMOS LA CONTRASEÑA */
-    const hashedPassword = await bcryptjs.hash(password, 10);
+          const newUser = await this.usersService.create({
+            name,
+            email,
+            password: hashedPassword,
+            secretWord: hashedSecretWord,
+          });
+        
+          console.log(newUser);
+          
+          if (newUser){
+            return {
+              message: "User created successfully",
+            };
+          } else{
+            throw new BadRequestException("En la creación");
+          }        
+    
+  } catch (error) {
+    throw new BadRequestException(error, "Error de conexión");
+  }
 
-    /** LLAMAMOS AL SERVICIO PARA CREAR EL USUARIO */
-    await this.usersService.create({
-      name,
-      email,
-      password: hashedPassword,
-    });
 
-    return {
-      message: "User created successfully",
-    };
   }
 // --------------- REGISTER FIN ---------------
 

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -22,7 +22,12 @@ export class UsersService {
 
   /* para crear un usuario, necesitamos un DTO */
   create(createUserDto: CreateUserDto) {
-    return this.userRepository.save(createUserDto);
+    try {
+      return this.userRepository.save(createUserDto);
+    } catch (error) {
+      throw new BadRequestException(error, "Error al crear el Usuario");
+    }
+   
   }
 
   /* lo que hace es buscar un usuario por mail y saber si existe */

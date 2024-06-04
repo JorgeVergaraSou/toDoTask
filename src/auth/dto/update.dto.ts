@@ -1,23 +1,25 @@
 import { Transform } from "class-transformer";
-import { IsEmail, IsString, MinLength } from "class-validator";
+import { IsString, MinLength, IsEmail, IsOptional } from "class-validator";
 
-export class CreateUserDto {
-
+export class UpdateDto {
     @Transform(({ value }) => value.trim())
     @IsString()
     @MinLength(5)
+    @IsOptional()
     name: string;
   
     @IsEmail()
+    @IsOptional()
     email: string;
   
     @Transform(({ value }) => value.trim())
     @IsString()
     @MinLength(6)
+    @IsOptional()
     password: string;
 
     @IsString()
-    @MinLength(6)
+    @MinLength(10)
+    @IsOptional()
     secretWord: string;
-
 }
