@@ -17,7 +17,7 @@ export class CreateUserDto {
     password: string;
 
     @IsString()
-    @MinLength(6)
+    @MinLength(10)
     secretWord: string;
 
 }

@@ -9,7 +9,7 @@ export class User {
     @PrimaryGeneratedColumn()
     idUser: number;
 
-    @Column({ length: 50 })
+    @Column({ length: 60 })
     name: string;
 
     /** ES UNICO Y NO PUEDE SER NULO */
@@ -22,16 +22,18 @@ export class User {
     @Column({ nullable: false})
     secretWord: string;
 
+    @Column()
+    imageFile: string;
+
     @Column({ type: 'enum', default: Role.USER, enum: Role })
     role: Role;
 
     @DeleteDateColumn()
-    deleteAt: Date;
+    deletedAt: Date;
 
     @CreateDateColumn()
-    createAt: Date;
+    createdAt: Date;
 
     @UpdateDateColumn()
-    updateAt: Date;
-
+    updatedAt: Date;
 }

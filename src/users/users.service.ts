@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -44,17 +44,27 @@ export class UsersService {
       select: ['idUser', 'name', 'email', 'role', 'password'],
     });
   }
-
+/*
   findAll() {
     return this.userRepository.find();
   }
+*/
+  updateUser(id: number, updateUserDto: UpdateUserDto) {
+    try {
+      const responseUpdate = this.userRepository.update(id, updateUserDto);
+      if (responseUpdate){
+        return { message: 'Datos actualizados con éxito' };
+      }else{
+        throw new InternalServerErrorException("Error al actualizar los datos");
+      }       
+    } catch (error) {
+      throw new InternalServerErrorException("Error al conectar a la BD");      
+    }   
+  }
+
 /* POR EL MOMENTO NO SE USARAN ESTOS METODOS
   findOne(id: number) {
     return `This action returns a #${id} user`;
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
   }
 
   remove(id: number) {
