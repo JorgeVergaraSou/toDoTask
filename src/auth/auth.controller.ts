@@ -25,33 +25,38 @@ export class AuthController {
       return this.authService.register(registerDto);
     } catch (error) {
       console.log(error);
-      
-    }
-    
-  }
 
+    }
+  }
 
   @HttpCode(HttpStatus.OK)
   @Post("login")
   login(@Body() /** SE RECIVE UN BODY */
   loginDto: LoginDto) { /** VARIABLE QUE DEBE COMPORTARSE COMO EL DTO */
-   try {
-    return this.authService.login(loginDto);
-   } catch (error) {
-    console.log(error);
-    
-   }
-    
+    try {
+      return this.authService.login(loginDto);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   @Patch('updateUser/:id')
   @Auth(Role.USER)
-  updateUser(@Param('id') id: number, @Body() updateUserDto: UpdateDto ){
+  updateUser(@Param('id') id: number, @Body() updateUserDto: UpdateDto) {
     try {
       return this.authService.updateUser(id, updateUserDto)
     } catch (error) {
       console.log(error);
-      
+
+    }
+  }
+
+  @Post("passwordRecovery")
+  passwordRecovery(@Body() updateUserDto: UpdateDto) {
+    try {
+
+    } catch (error) {
+      console.log(error);
     }
   }
 

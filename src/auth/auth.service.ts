@@ -90,7 +90,7 @@ export class AuthService {
     };
   }
   /** 
-   *   async update(id: number, updateBreed: CreateBreedDto) {
+   *   async passwordRecovery(id: number, updateBreed: CreateBreedDto) {
       try {
         return await this.breedRepository.update(id, updateBreed);
       } catch (error) {
@@ -100,7 +100,7 @@ export class AuthService {
    */
   async updateUser(id: number, updateUser: UpdateDto) {
     try {
-      const updateUserAuth = await this.usersService.updateUser(id, updateUser)
+      const updateUserAuth = this.usersService.updateUser(id, updateUser)
       return updateUserAuth;
     } catch (error) {
       console.log(error);
