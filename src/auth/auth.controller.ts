@@ -2,16 +2,20 @@ import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards, Req, Patc
 import { LoginDto } from "./dto/login.dto";
 import { RegisterDto } from "./dto/register.dto";
 import { AuthService } from "./auth.service";
+/*
 import { AuthGuard } from "./guard/auth.guard";
 import { Request } from "express";
 import { Roles } from "./decorators/roles.decorator";
 import { RolesGuard } from "./guard/roles.guard";
 import { RequestWithUser } from "./interfaces/reqWithUser.interface";
+*/
 import { Role } from "../common/enums/role.enum";
 import { Auth } from "./decorators/auth.decorator";
 import { ActiveUser } from "../common/decorators/active-user.decorator";
 import { UserActiveInterface } from "src/common/interfaces/user-active.interface";
 import { UpdateDto } from "./dto/update.dto";
+import { secureHeapUsed } from "crypto";
+import { RecoveryDto } from "./dto/recovery.dto";
 
 @Controller("auth")
 export class AuthController {
@@ -52,8 +56,10 @@ export class AuthController {
   }
 
   @Post("passwordRecovery")
-  passwordRecovery(@Body() updateUserDto: UpdateDto) {
+  passwordRecovery(@Body() recoveryDto: RecoveryDto) {
     try {
+      return this.authService.passwordRecovery(recoveryDto);     
+   
 
     } catch (error) {
       console.log(error);

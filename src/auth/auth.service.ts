@@ -4,8 +4,9 @@ import { JwtService } from "@nestjs/jwt";
 import * as bcryptjs from "bcryptjs";
 import { UsersService } from "../users/users.service";
 import { LoginDto } from "./dto/login.dto";
-import { UpdateUserDto } from "src/users/dto/update-user.dto";
+//import { UpdateUserDto } from "src/users/dto/update-user.dto";
 import { UpdateDto } from "./dto/update.dto"
+import { RecoveryDto } from "./dto/recovery.dto";
 /** EL AUTH SERVICE ES EL QUE SE CONECTARA CON EL USER-SERVICE DE OTRO MODULO,
  * DEBE TRAERSE TODAS LAS FUNCIONES
  */
@@ -30,22 +31,18 @@ export class AuthService {
       if (user) {
         throw new BadRequestException("Email already exists");
       }
-
       /** SI NO EXISTE SEGUIMOS CON EL REGISTRO */
       /** CIFRAMOS LA CONTRASEÑA */
       const hashedPassword = await bcryptjs.hash(password, 10);
       const hashedSecretWord = await bcryptjs.hash(secretWord, 10);
 
       /** LLAMAMOS AL SERVICIO PARA CREAR EL USUARIO */
-
       const newUser = await this.usersService.create({
         name,
         email,
         password: hashedPassword,
         secretWord: hashedSecretWord,
       });
-
-      console.log(newUser);
 
       if (newUser) {
         return {
@@ -54,7 +51,6 @@ export class AuthService {
       } else {
         throw new BadRequestException("En la creación");
       }
-
     } catch (error) {
       throw new BadRequestException(error, "Error de conexión");
     }
@@ -89,15 +85,30 @@ export class AuthService {
       token,
     };
   }
-  /** 
-   *   async passwordRecovery(id: number, updateBreed: CreateBreedDto) {
+  
+  /** INICIO RECUPERAR CLAVE */
+     async passwordRecovery({ password, email, secretWord }: RecoveryDto) {
       try {
-        return await this.breedRepository.update(id, updateBreed);
+        const userData = await this.usersService.findOneByEmail(email);
+
+        if (!userData) {
+          throw new BadRequestException("No existe el E-mail");
+        }
+
+        const secretWordRecovery = userData.secretWord
+
+
+
+
+        return userData
+        
       } catch (error) {
-        throw new BadRequestException(error, 'QUERY FAILED WHEN TRYING TO UPDATE THE BREED');
+        throw new BadRequestException(error, 'QUERY FAILED WHEN TRYING TO UPDATE THE USER');
       }
     }
-   */
+   /** FIN  RECUPERAR CLAVE*/
+
+   /** INICIO UPDATE USER */
   async updateUser(id: number, updateUser: UpdateDto) {
     try {
       const updateUserAuth = this.usersService.updateUser(id, updateUser)
