@@ -88,23 +88,19 @@ export class AuthService {
   
   /** INICIO RECUPERAR CLAVE */
      async passwordRecovery({ password, email, secretWord }: RecoveryDto) {
-      try {
+   
         const userData = await this.usersService.findOneByEmail(email);
 
         if (!userData) {
           throw new BadRequestException("No existe el E-mail");
         }
 
-        const secretWordRecovery = userData.secretWord
 
-
-
-
-        return userData
-        
-      } catch (error) {
-        throw new BadRequestException(error, 'QUERY FAILED WHEN TRYING TO UPDATE THE USER');
+      const isSecretWordValid = await bcryptjs.compare(secretWord, userData.secretWord); 
+      if (!isSecretWordValid) {
+throw new UnauthorizedException("La palabra secreta no coincide");
       }
+
     }
    /** FIN  RECUPERAR CLAVE*/
 

@@ -57,6 +57,7 @@ export class AuthController {
 
   @Post("passwordRecovery")
   passwordRecovery(@Body() recoveryDto: RecoveryDto) {
+    
     try {
       return this.authService.passwordRecovery(recoveryDto);     
    
