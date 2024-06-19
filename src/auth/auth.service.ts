@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UnauthorizedException, } from "@nestjs/common";
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException, } from "@nestjs/common";
 import { RegisterDto } from "./dto/register.dto";
 import { JwtService } from "@nestjs/jwt";
 import * as bcryptjs from "bcryptjs";
@@ -7,6 +7,7 @@ import { LoginDto } from "./dto/login.dto";
 //import { UpdateUserDto } from "src/users/dto/update-user.dto";
 import { UpdateDto } from "./dto/update.dto"
 import { RecoveryDto } from "./dto/recovery.dto";
+import { User } from "src/users/entities/user.entity";
 /** EL AUTH SERVICE ES EL QUE SE CONECTARA CON EL USER-SERVICE DE OTRO MODULO,
  * DEBE TRAERSE TODAS LAS FUNCIONES
  */
@@ -85,26 +86,28 @@ export class AuthService {
       token,
     };
   }
-  
+
   /** INICIO RECUPERAR CLAVE */
-     async passwordRecovery({ password, email, secretWord }: RecoveryDto) {
-   
-        const userData = await this.usersService.findOneByEmail(email);
+  async passwordRecovery({ password, email, secretWord }: RecoveryDto) {
 
-        if (!userData) {
-          throw new BadRequestException("No existe el E-mail");
-        }
+    const userData = await this.usersService.findOneByEmail(email);
 
-
-      const isSecretWordValid = await bcryptjs.compare(secretWord, userData.secretWord); 
-      if (!isSecretWordValid) {
-throw new UnauthorizedException("La palabra secreta no coincide");
-      }
-
+    if (!userData) {
+      throw new NotFoundException("No existe el E-mail");
     }
-   /** FIN  RECUPERAR CLAVE*/
+    const isSecretWordValid = await bcryptjs.compare(secretWord, userData.secretWord);
+    if (!isSecretWordValid) {
+      throw new UnauthorizedException("La palabra secreta no coincide");
+    } else {
+      const hashedPasswordRecovery = await bcryptjs.hash(password, 10);
+      const updateUserAuth = this.usersService.updateUser(userData.idUser, { password: hashedPasswordRecovery });
+         
+      return updateUserAuth
+    }
+  }
+  /** FIN  RECUPERAR CLAVE*/
 
-   /** INICIO UPDATE USER */
+  /** INICIO UPDATE USER */
   async updateUser(id: number, updateUser: UpdateDto) {
     try {
       const updateUserAuth = this.usersService.updateUser(id, updateUser)

@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, InternalServerErrorException } from '@
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { User } from './entities/user.entity';
 
 /* aca se hacen las inserciones, actualizaciones etc. pero este servicio no lo va usar el user.controller  
@@ -49,16 +49,17 @@ export class UsersService {
     return this.userRepository.find();
   }
 */
-  updateUser(id: number, updateUserDto: UpdateUserDto) {
+ async updateUser(id: number, updateUserDto: UpdateUserDto) {
     try {
-      const responseUpdate = this.userRepository.update(id, updateUserDto);
-      if (responseUpdate){
-        return { message: 'Datos actualizados con éxito' };
+      const result: UpdateResult = await this.userRepository.update(id, updateUserDto);
+
+      if (result.affected === 0) {
+        throw new InternalServerErrorException('Update failed');
       }else{
-        throw new InternalServerErrorException("Error al actualizar los datos");
+        return { message: 'Datos actualizados con éxito' };
       }       
     } catch (error) {
-      throw new InternalServerErrorException("Error al conectar a la BD");      
+      throw new InternalServerErrorException(error);      
     }   
   }
 
