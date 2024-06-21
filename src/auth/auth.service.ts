@@ -88,7 +88,7 @@ export class AuthService {
     const userData = await this.usersService.findOneByEmail(email);
 
     if (!userData) {
-      throw new NotFoundException("No existe el E-mail");
+      throw new NotFoundException("No existe el Usuario");
     }
     const isSecretWordValid = await bcryptjs.compare(secretWord, userData.secretWord);
 
@@ -104,12 +104,18 @@ export class AuthService {
 
   /** INICIO UPDATE USER */
   async updateUser(id: number, updateUserDto: UpdateDto) {
-    const userData = await this.usersService.findOneByEmail(updateUserDto.email);
+/** busca si el email que se quiere cambiar, ya existe o no en la BD, si existe, no se puede usar */
+    const existeEmail = await this.usersService.findOneByEmail(updateUserDto.email);
+    if (existeEmail) {
+      throw new NotFoundException('Ya se encuentra en uso este E-mail');
+    }
+
+    const userData = await this.usersService.findOneById(id);
     if (!userData) {
       throw new NotFoundException('Usuario no encontrado');
     }
 
-    const result = await this.usersService.updateUser(id, updateUserDto);
+    const result = await this.usersService.updateUser(userData.idUser, updateUserDto);
 
     if (result) {
       return result;

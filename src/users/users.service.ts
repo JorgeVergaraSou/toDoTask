@@ -34,6 +34,9 @@ export class UsersService {
   findOneByEmail(email: string){
     return this.userRepository.findOneBy({ email })
   }
+  findOneById(idUser: number) {
+    return this.userRepository.findOneBy( {idUser} );
+  }
 
   /** debido al cambio en la entidad del select false password, implementaremos este metodo
    * haciendo una consulta personalizada quenos traiga el password
@@ -65,9 +68,7 @@ export class UsersService {
 
 
 /* POR EL MOMENTO NO SE USARAN ESTOS METODOS
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
+
 
   remove(id: number) {
     return `This action removes a #${id} user`;
