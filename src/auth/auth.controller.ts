@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards, Req, Patch, Param } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, /* UseGuards, Req, */ Patch, Param, UnauthorizedException, BadRequestException, NotFoundException } from "@nestjs/common";
 import { LoginDto } from "./dto/login.dto";
 import { RegisterDto } from "./dto/register.dto";
 import { AuthService } from "./auth.service";
@@ -14,7 +14,6 @@ import { Auth } from "./decorators/auth.decorator";
 import { ActiveUser } from "../common/decorators/active-user.decorator";
 import { UserActiveInterface } from "src/common/interfaces/user-active.interface";
 import { UpdateDto } from "./dto/update.dto";
-import { secureHeapUsed } from "crypto";
 import { RecoveryDto } from "./dto/recovery.dto";
 
 @Controller("auth")
@@ -22,55 +21,78 @@ export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
   // TODOS NECESITAN UN VERBO PARA FUNCIONAR, PARA LOS LOGIN Y REGISTER USAMOS EL POST
-  @Post("register")
-  register(@Body()
-  registerDto: RegisterDto) { /** PARA ESTANDARIZAR LA INFO QUE LLEGA POR EL BODY, USAMOS LOS DTO */
+  @Post('register')
+  async register(@Body() registerDto: RegisterDto) {
     try {
-      return this.authService.register(registerDto);
+      const result = await this.authService.register(registerDto);
+      if (result) {
+        return result;
+      } else {
+        throw new BadRequestException('Error en el registro');
+      }
     } catch (error) {
-      console.log(error);
-
+      throw new BadRequestException(error.message);
     }
   }
 
   @HttpCode(HttpStatus.OK)
-  @Post("login")
-  login(@Body() /** SE RECIVE UN BODY */
-  loginDto: LoginDto) { /** VARIABLE QUE DEBE COMPORTARSE COMO EL DTO */
+  @Post('login')
+  async login(@Body() loginDto: LoginDto) {
     try {
-      return this.authService.login(loginDto);
+      const result = await this.authService.login(loginDto);
+      if (result) {
+        return result;
+      } else {
+        throw new UnauthorizedException('Credenciales inválidas');
+      }
     } catch (error) {
-      console.log(error);
+      throw new UnauthorizedException(error.message);
     }
   }
 
   @Patch('updateUser/:id')
   @Auth(Role.USER)
-  updateUser(@Param('id') id: number, @Body() updateUserDto: UpdateDto) {
+  async updateUser(@Param('id') id: number, @Body() updateUserDto: UpdateDto) {
     try {
-      return this.authService.updateUser(id, updateUserDto)
+      const result = await this.authService.updateUser(id, updateUserDto);
+      if (result) {
+        return { message: 'Usuario actualizado con éxito', user: result };
+      } else {
+        throw new NotFoundException('Usuario no encontrado o no actualizado');
+      }
     } catch (error) {
-      console.log(error);
-
+      throw new BadRequestException(error.message);
     }
   }
 
   @Post("passwordRecovery")
-  passwordRecovery(@Body() recoveryDto: RecoveryDto) {
-    
+  @Auth(Role.USER)
+  async passwordRecovery(@Body() recoveryDto: RecoveryDto) {
     try {
-      return this.authService.passwordRecovery(recoveryDto);     
-   
-
+      const result = await this.authService.passwordRecovery(recoveryDto);
+      if (result) {
+        return { message: 'Clave cambiada con éxito' };
+      } else {
+        throw new UnauthorizedException('Error al cambiar la clave');
+      }
     } catch (error) {
-      console.log(error);
+      throw new UnauthorizedException(error.message);
     }
   }
 
   @Get('profile')
-  @Auth(Role.USER) /** decorador personalizado que une varios decoradores */
-  profile(@ActiveUser() user: UserActiveInterface) { /** este request es el que tiene el payload */
-    return this.authService.profile(user);
+  @Auth(Role.USER)
+  async profile(@ActiveUser() user: UserActiveInterface) {
+    try {
+      const result = await this.authService.profile(user);
+      if (result) {
+        return result;
+      } else {
+        throw new NotFoundException('Perfil no encontrado');
+      }
+    } catch (error) {
+      throw new UnauthorizedException(error.message);
+    }
   }
 
 } /** EL CONTROLADOR RECIBE UNA PETICION, VE A DONDE DEBE ENVIARLA Y REGRESAR UNA RESPUESTA AL USUARIO */

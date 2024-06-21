@@ -8,6 +8,7 @@ import { LoginDto } from "./dto/login.dto";
 import { UpdateDto } from "./dto/update.dto"
 import { RecoveryDto } from "./dto/recovery.dto";
 import { User } from "src/users/entities/user.entity";
+import { UserActiveInterface } from "src/common/interfaces/user-active.interface";
 /** EL AUTH SERVICE ES EL QUE SE CONECTARA CON EL USER-SERVICE DE OTRO MODULO,
  * DEBE TRAERSE TODAS LAS FUNCIONES
  */
@@ -23,8 +24,7 @@ export class AuthService {
   // REGISTER INICIO
   /** HACEMOS DESECTRUCTURACION PASANDO LAS VARIABLES POR SEPARADO */
   async register({ password, email, name, secretWord }: RegisterDto) {
-
-    try {
+    
       /** BUSCAMOS EN LA "BD" QUE NO EXISTA EL EMAIL */
       const user = await this.usersService.findOneByEmail(email);
 
@@ -46,17 +46,14 @@ export class AuthService {
       });
 
       if (newUser) {
-        return {
-          message: "User created successfully",
-        };
+        return { message: 'Usuario creado exitosamente' };
       } else {
-        throw new BadRequestException("En la creación");
+        throw new BadRequestException('Error en la creación del usuario');
       }
-    } catch (error) {
-      throw new BadRequestException(error, "Error de conexión");
-    }
+
   }
   // --------------- REGISTER FIN ---------------
+
   /** ----------------- INICIO LOGIN ------------------- */
   async login({ email, password }: LoginDto) {
     /** BUSCA EL USUARIO EN LA BD */
@@ -82,9 +79,7 @@ export class AuthService {
 
     /** ahora retornamos el token y la info que queramos, cada vez que el usuario quiera aceder a una ruta
      * protegida va a tener que enviar el jwt para ser autorizado     */
-    return {
-      token,
-    };
+    return { token };
   }
 
   /** INICIO RECUPERAR CLAVE */
@@ -96,12 +91,12 @@ export class AuthService {
       throw new NotFoundException("No existe el E-mail");
     }
     const isSecretWordValid = await bcryptjs.compare(secretWord, userData.secretWord);
+
     if (!isSecretWordValid) {
       throw new UnauthorizedException("La palabra secreta no coincide");
     } else {
       const hashedPasswordRecovery = await bcryptjs.hash(password, 10);
       const updateUserAuth = this.usersService.updateUser(userData.idUser, { password: hashedPasswordRecovery });
-         
       return updateUserAuth
     }
   }
@@ -120,9 +115,17 @@ export class AuthService {
 
   /** ===================== FIN LOGIN ===================== */
 
+  async profile(user: UserActiveInterface) {
+    const profile = await this.usersService.findOneByEmail(user.email);
+    if (!profile) {
+      throw new NotFoundException('Perfil no encontrado');
+    }
+    return profile;
+  }
+/*
   async profile({ email, role }: { email: string, role: string }) {
 
     return await this.usersService.findOneByEmail(email);
-  }
+  }*/
 
 }
