@@ -103,6 +103,21 @@ export class AuthService {
   /** FIN  RECUPERAR CLAVE*/
 
   /** INICIO UPDATE USER */
+  async updateUser(id: number, updateUserDto: UpdateDto) {
+    const userData = await this.usersService.findOneByEmail(updateUserDto.email);
+    if (!userData) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    const result = await this.usersService.updateUser(id, updateUserDto);
+
+    if (result) {
+      return result;
+    } else {
+      throw new InternalServerErrorException('Error al actualizar el usuario');
+    }
+  }
+  /*
   async updateUser(id: number, updateUser: UpdateDto) {
     try {
       const updateUserAuth = this.usersService.updateUser(id, updateUser)
@@ -111,7 +126,7 @@ export class AuthService {
       console.log(error);
 
     }
-  }
+  }*/
 
   /** ===================== FIN LOGIN ===================== */
 
