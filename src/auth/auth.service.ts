@@ -143,10 +143,6 @@ export class AuthService {
     }
     return profile;
   }
-/*
-  async profile({ email, role }: { email: string, role: string }) {
 
-    return await this.usersService.findOneByEmail(email);
-  }*/
 
 }
