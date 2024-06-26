@@ -7,8 +7,9 @@ import { LoginDto } from "./dto/login.dto";
 //import { UpdateUserDto } from "src/users/dto/update-user.dto";
 import { UpdateDto } from "./dto/update.dto"
 import { RecoveryDto } from "./dto/recovery.dto";
-import { User } from "src/users/entities/user.entity";
+//import { User } from "src/users/entities/user.entity";
 import { UserActiveInterface } from "src/common/interfaces/user-active.interface";
+import { RequestResetPasswordDto } from "./dto/requestResetPassword.dto";
 /** EL AUTH SERVICE ES EL QUE SE CONECTARA CON EL USER-SERVICE DE OTRO MODULO,
  * DEBE TRAERSE TODAS LAS FUNCIONES
  */
@@ -99,6 +100,10 @@ export class AuthService {
       const updateUserAuth = this.usersService.updateUser(userData.idUser, { password: hashedPasswordRecovery });
       return updateUserAuth
     }
+  }
+
+  async resetPasswordByEmail(requestResetPassword: RequestResetPasswordDto){
+
   }
   /** FIN  RECUPERAR CLAVE*/
 

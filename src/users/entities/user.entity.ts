@@ -15,9 +15,12 @@ export class User {
     /** ES UNICO Y NO PUEDE SER NULO */
     @Column({ unique: true, nullable: false })
     email: string;
-
+/** el select: false, es para que el campo password no sea seleccionado en cualquier pedido */
     @Column({ nullable: false, select: false })
     password: string;
+
+    @Column({ type: 'uuid', unique: true, nullable: true})
+    resetPasswordToken: string;
 
     @Column({ nullable: false})
     secretWord: string;

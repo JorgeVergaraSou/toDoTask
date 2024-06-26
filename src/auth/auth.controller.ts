@@ -15,6 +15,7 @@ import { ActiveUser } from "../common/decorators/active-user.decorator";
 import { UserActiveInterface } from "src/common/interfaces/user-active.interface";
 import { UpdateDto } from "./dto/update.dto";
 import { RecoveryDto } from "./dto/recovery.dto";
+import { RequestResetPasswordDto } from "./dto/requestResetPassword.dto";
 
 @Controller("auth")
 export class AuthController {
@@ -78,6 +79,11 @@ export class AuthController {
     } catch (error) {
       throw new UnauthorizedException(error.message);
     }
+  }
+
+  @Patch('resetPassword')
+  resetPasswordByEmail(@Body() resetPassword: RequestResetPasswordDto){
+    return this.authService.resetPasswordByEmail(resetPassword);
   }
 
   @Get('profile')
