@@ -22,4 +22,8 @@ export class UpdateDto {
     @MinLength(10)
     @IsOptional()
     secretWord: string;
+
+    @IsString()
+    @IsOptional()
+    resetPasswordToken: string;
 }

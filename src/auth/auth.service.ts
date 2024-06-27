@@ -10,6 +10,8 @@ import { RecoveryDto } from "./dto/recovery.dto";
 //import { User } from "src/users/entities/user.entity";
 import { UserActiveInterface } from "src/common/interfaces/user-active.interface";
 import { RequestResetPasswordDto } from "./dto/requestResetPassword.dto";
+import { v4 as uuidv4 } from 'uuid';
+import { UpdateUserDto } from "../users/dto/update-user.dto";
 /** EL AUTH SERVICE ES EL QUE SE CONECTARA CON EL USER-SERVICE DE OTRO MODULO,
  * DEBE TRAERSE TODAS LAS FUNCIONES
  */
@@ -103,7 +105,15 @@ export class AuthService {
   }
 
   async resetPasswordByEmail(requestResetPassword: RequestResetPasswordDto){
+    const {email} = requestResetPassword;
+    const userData = await this.usersService.findOneByEmail(email);
 
+    const updateUserDto: UpdateUserDto = {
+      resetPasswordToken: uuidv4(),
+    };
+
+    await this.usersService.updateUser(userData.idUser, updateUserDto);
+      // Send email (e.g. Dispatch an event so MailerModule can send the email)
   }
   /** FIN  RECUPERAR CLAVE*/
 

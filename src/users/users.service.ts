@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -31,8 +31,14 @@ export class UsersService {
   }
 
   /* lo que hace es buscar un usuario por mail y saber si existe */
-  findOneByEmail(email: string){
-    return this.userRepository.findOneBy({ email })
+async  findOneByEmail(email: string){
+    const user = await this.userRepository.findOneBy({ email });
+    
+    if(!user){
+      throw new NotFoundException(`Usuario con email ${email} no existe `)
+    }
+    
+    return user;
   }
   findOneById(idUser: number) {
     return this.userRepository.findOneBy( {idUser} );
