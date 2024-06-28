@@ -16,6 +16,7 @@ import { UserActiveInterface } from "src/common/interfaces/user-active.interface
 import { UpdateDto } from "./dto/update.dto";
 import { RecoveryDto } from "./dto/recovery.dto";
 import { RequestResetPasswordDto } from "./dto/requestResetPassword.dto";
+import { ResetPasswordDto } from "./dto/resetPassword.dto";
 
 @Controller("auth")
 export class AuthController {
@@ -81,10 +82,16 @@ export class AuthController {
     }
   }
 
-  @Patch('resetPassword')
-  resetPasswordByEmail(@Body() resetPassword: RequestResetPasswordDto){
-    return this.authService.resetPasswordByEmail(resetPassword);
+  @Patch('requestResetPassword')
+  requestResetPasswordByEmail(@Body() requestResetPasswordDto: RequestResetPasswordDto) {
+    return this.authService.requestResetPasswordByEmail(requestResetPasswordDto);
   }
+
+  @Patch('resetPassword')
+  resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    return this.authService.resetPassword(resetPasswordDto)
+  }
+
 
   @Get('profile')
   @Auth(Role.USER)

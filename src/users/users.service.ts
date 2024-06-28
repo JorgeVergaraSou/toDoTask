@@ -43,6 +43,14 @@ async  findOneByEmail(email: string){
   findOneById(idUser: number) {
     return this.userRepository.findOneBy( {idUser} );
   }
+  async findOneByResetPasswordToken(resetPasswordToken: string){
+const user: User = await this.userRepository.findOneBy({resetPasswordToken})
+if(!user){
+  throw new NotFoundException(`Token no valido `)
+}
+
+return user;
+  }
 
   /** debido al cambio en la entidad del select false password, implementaremos este metodo
    * haciendo una consulta personalizada quenos traiga el password
