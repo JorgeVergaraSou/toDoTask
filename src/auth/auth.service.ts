@@ -13,7 +13,7 @@ import { RequestResetPasswordDto } from "./dto/requestResetPassword.dto";
 import { v4 as uuidv4 } from 'uuid';
 import { UpdateUserDto } from "../users/dto/update-user.dto";
 import { ResetPasswordDto } from "./dto/resetPassword.dto";
-import { User } from "src/users/entities/user.entity";
+import { User } from "../users/entities/user.entity";
 /** EL AUTH SERVICE ES EL QUE SE CONECTARA CON EL USER-SERVICE DE OTRO MODULO,
  * DEBE TRAERSE TODAS LAS FUNCIONES
  */
@@ -124,7 +124,7 @@ export class AuthService {
       resetPasswordToken,
     );
 
-    user.password = // await this.encoderService.encodePassword(password);
+    user.password = await bcryptjs.hash(password, 10);
     user.resetPasswordToken = null;
     this.usersService.create(user);
   
