@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { UpdateUserDto } from "../users/dto/update-user.dto";
 import { ResetPasswordDto } from "./dto/resetPassword.dto";
 import { User } from "../users/entities/user.entity";
+import { transporter } from "src/config/mailer";
 /** EL AUTH SERVICE ES EL QUE SE CONECTARA CON EL USER-SERVICE DE OTRO MODULO,
  * DEBE TRAERSE TODAS LAS FUNCIONES
  */
@@ -115,7 +116,18 @@ export class AuthService {
     };
 
     await this.usersService.updateUser(userData.idUser, updateUserDto);
-      // Send email (e.g. Dispatch an event so MailerModule can send the email)
+    
+    await transporter.sendMail({
+      from: '"Maddison Foo Koch 👻" <siguiendolaluna07@gmail.com>', // sender address
+      to: userData.email, // list of receivers
+      subject: "Olvidaste la clave??", // Subject line
+     // text: "Hello world?", // plain text body
+      html: `
+      <b>papanatas te olvidaste la clave??? entra al siguiente link</b>
+      <a href="http://localhost:3006/api/auth/resetPassword?token=${updateUserDto.resetPasswordToken}">click aca</a>
+    `, // html body// html body
+    });  
+   
   }
 
   async resetPassword(resetPasswordDto: ResetPasswordDto){

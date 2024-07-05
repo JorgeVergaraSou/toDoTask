@@ -7,6 +7,9 @@ import * as express from 'express';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule,
     new ExpressAdapter(express()),
+    {
+      logger: ['warn', 'error'], 
+    }
     );
   app.setGlobalPrefix("api");
   app.useGlobalPipes(

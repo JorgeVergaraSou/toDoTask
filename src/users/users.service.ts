@@ -18,7 +18,7 @@ export class UsersService {
     // privado, solo lectura para que no se pueda mutar, variable que se tiene que comportar como un
     // repositorio de la entidad User
     private readonly userRepository: Repository<User>,
-  ) {}
+  ) { }
 
   /* para crear un usuario, necesitamos un DTO */
   create(createUserDto: CreateUserDto) {
@@ -27,65 +27,66 @@ export class UsersService {
     } catch (error) {
       throw new BadRequestException(error, "Error al crear el Usuario");
     }
-   
+
   }
 
   /* lo que hace es buscar un usuario por mail y saber si existe */
-async  findOneByEmail(email: string){
+  async findOneByEmail(email: string) {
     const user = await this.userRepository.findOneBy({ email });
-    
-    if(!user){
+
+    if (!user) {
       throw new NotFoundException(`Usuario con email ${email} no existe `)
     }
-    
+
     return user;
   }
   findOneById(idUser: number) {
-    return this.userRepository.findOneBy( {idUser} );
+    return this.userRepository.findOneBy({ idUser });
   }
-  async findOneByResetPasswordToken(resetPasswordToken: string){
-const user: User = await this.userRepository.findOneBy({resetPasswordToken})
-if(!user){
-  throw new NotFoundException(`Token no valido `)
-}
 
-return user;
+  async findOneByResetPasswordToken(resetPasswordToken: string) {
+    const user: User = await this.userRepository.findOneBy({ resetPasswordToken })
+    if (!user) {
+      throw new NotFoundException(`Token no valido `)
+    }
+
+    return user;
   }
 
   /** debido al cambio en la entidad del select false password, implementaremos este metodo
    * haciendo una consulta personalizada quenos traiga el password
    */
-  findByEmailWithPassword(email: string){
+  findByEmailWithPassword(email: string) {
     return this.userRepository.findOne({
-      where: { email }, 
+      where: { email },
       select: ['idUser', 'name', 'email', 'role', 'password'],
     });
   }
-/*
-  findAll() {
-    return this.userRepository.find();
-  }
-*/
- async updateUser(id: number, updateUserDto: UpdateUserDto) {
+  /*
+    findAll() {
+      return this.userRepository.find();
+    }
+  */
+  async updateUser(id: number, updateUserDto: UpdateUserDto) {
     try {
       const result: UpdateResult = await this.userRepository.update(id, updateUserDto);
 
       if (result.affected === 0) {
         throw new InternalServerErrorException('Update failed');
-      }else{
+      } else {
         return { message: 'Datos actualizados con éxito' };
-      }       
+      }
     } catch (error) {
-      throw new InternalServerErrorException(error);      
-    }   
+      throw new InternalServerErrorException(error);
+    }
   }
 
 
-/* POR EL MOMENTO NO SE USARAN ESTOS METODOS
-
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
-  */
+  /* POR EL MOMENTO NO SE USARAN ESTOS METODOS
+  
+  
+    remove(id: number) {
+      return `This action removes a #${id} user`;
+    }
+    */
 }
