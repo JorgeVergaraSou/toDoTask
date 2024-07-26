@@ -3,6 +3,7 @@ import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { DB_TYPE, HOST, USER_DB_NAME, USER_DB_PASSWORD, PORT, DATABASE_NAME } from 'config';
+import { TaskModule } from './task/task.module';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { DB_TYPE, HOST, USER_DB_NAME, USER_DB_PASSWORD, PORT, DATABASE_NAME } fr
     database: DATABASE_NAME,
     autoLoadEntities: true, // CARGA LAS ENTITYS DE FORMA AUTOMATICA PARA NO HACERLO MANUAL
     synchronize: true, // TODO CAMBIO QUE SE GENERE ACA, SE SINCRONIZA CON LA "BD"
-  }),AuthModule],
+  }),AuthModule, TaskModule],
   controllers: [],
   providers: [],
 })
