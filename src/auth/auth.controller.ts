@@ -66,7 +66,7 @@ export class AuthController {
       throw new BadRequestException(error.message);
     }
   }
-
+/*
   @Post("passwordRecovery")
   @Auth(Role.USER)
   async passwordRecovery(@Body() recoveryDto: RecoveryDto) {
@@ -81,7 +81,7 @@ export class AuthController {
       throw new UnauthorizedException(error.message);
     }
   }
-
+*/
   @Patch('requestResetPassword')
   requestResetPasswordByEmail(@Body() requestResetPasswordDto: RequestResetPasswordDto) {
     return this.authService.requestResetPasswordByEmail(requestResetPasswordDto);

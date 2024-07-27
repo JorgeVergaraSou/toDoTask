@@ -11,7 +11,7 @@ async function bootstrap() {
       logger: ['warn', 'error'], 
     }
     );
-  app.setGlobalPrefix("api");
+  app.setGlobalPrefix("task");
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true, 
@@ -26,7 +26,7 @@ async function bootstrap() {
       optionsSuccessStatus: 204,
       credentials: true,
     });
-  await app.listen(3006);
+  await app.listen(3008);
 }
 bootstrap();
 

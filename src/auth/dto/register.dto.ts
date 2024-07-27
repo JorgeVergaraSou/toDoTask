@@ -1,5 +1,5 @@
 import { Transform } from "class-transformer";
-import { IsEmail, IsString, MinLength } from "class-validator";
+import { IsEmail, IsOptional, IsString, MinLength } from "class-validator";
 
 export class RegisterDto {
   /** CLASS VALIDATOR INDICA COMO DEBE COMPORTARSE LA VARIABLE Y LO QUE DEBE RECIBIR */
@@ -18,8 +18,6 @@ export class RegisterDto {
   @MinLength(6)
   password: string;
 
-  @IsString()
-  @MinLength(10)
-  secretWord: string;
+ 
 }
  /* ESTE DTO SIRVE PARA ESTANDARIZAR LA INFO Y PODER REGISTRAR UN NUEVO USUARIO */

@@ -34,10 +34,6 @@ export class UsersService {
   async findOneByEmail(email: string) {
     const user = await this.userRepository.findOneBy({ email });
 
-    if (!user) {
-      throw new NotFoundException(`Usuario con email ${email} no existe `)
-    }
-
     return user;
   }
   findOneById(idUser: number) {

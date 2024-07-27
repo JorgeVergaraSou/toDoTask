@@ -17,10 +17,6 @@ export class CreateUserDto {
     password: string;
 
     @IsString()
-    @MinLength(10)
-    secretWord: string;
-
-    @IsString()
     @IsOptional()
     resetPasswordToken?: string;
 

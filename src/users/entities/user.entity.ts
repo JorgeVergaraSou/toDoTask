@@ -22,9 +22,6 @@ export class User {
     @Column({ type: 'uuid', unique: true, nullable: true})
     resetPasswordToken: string;
 
-    @Column({ nullable: false})
-    secretWord: string;
-
     @Column()
     imageFile: string;
 

@@ -7,6 +7,4 @@ export class CreateTaskDto {
     @IsString()
     description: string;
 
-    @IsString()
-    status: string;
 }

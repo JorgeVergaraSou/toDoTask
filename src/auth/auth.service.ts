@@ -29,7 +29,7 @@ export class AuthService {
 
   // REGISTER INICIO
   /** HACEMOS DESECTRUCTURACION PASANDO LAS VARIABLES POR SEPARADO */
-  async register({ password, email, name, secretWord }: RegisterDto) {
+  async register({ password, email, name }: RegisterDto) {
     
       /** BUSCAMOS EN LA "BD" QUE NO EXISTA EL EMAIL */
       const user = await this.usersService.findOneByEmail(email);
@@ -41,14 +41,14 @@ export class AuthService {
       /** SI NO EXISTE SEGUIMOS CON EL REGISTRO */
       /** CIFRAMOS LA CONTRASEÑA */
       const hashedPassword = await bcryptjs.hash(password, 10);
-      const hashedSecretWord = await bcryptjs.hash(secretWord, 10);
+    
 
       /** LLAMAMOS AL SERVICIO PARA CREAR EL USUARIO */
       const newUser = await this.usersService.create({
         name,
         email,
         password: hashedPassword,
-        secretWord: hashedSecretWord,
+    
       });
 
       if (newUser) {
@@ -88,7 +88,7 @@ export class AuthService {
     return { token };
   }
 
-  /** INICIO RECUPERAR CLAVE */
+  /** INICIO RECUPERAR CLAVE 
   async passwordRecovery({ password, email, secretWord }: RecoveryDto) {
 
     const userData = await this.usersService.findOneByEmail(email);
@@ -106,7 +106,7 @@ export class AuthService {
       return updateUserAuth
     }
   }
-
+*/
   async requestResetPasswordByEmail(requestResetPassword: RequestResetPasswordDto){
     const {email} = requestResetPassword;
     const userData = await this.usersService.findOneByEmail(email);

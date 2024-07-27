@@ -10,16 +10,11 @@ export class TaskService {
   constructor(@InjectRepository(Task) private readonly taskRepository: Repository<Task>) { }
   async create(createTaskDto: CreateTaskDto): Promise<{ success: boolean, message?: string, task?: Task }> {
     try {
-      const upperCaseDto = {
-        ...createTaskDto,
-        title: createTaskDto.title.toUpperCase(),
-      };
 
-      const newTask = this.taskRepository.create(upperCaseDto);
-      const taskSaved = await this.taskRepository.save(newTask);
+      const taskSaved = await this.taskRepository.save(createTaskDto);
 
-      if (!newTask) {
-        return { success: false, message: 'No se pudo guardar el servicio' };
+      if (!taskSaved) {
+        return { success: false, message: 'No se pudo guardar la tarea' };
       }
       return { success: true, task: taskSaved };
 
